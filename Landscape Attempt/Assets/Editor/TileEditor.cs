@@ -12,11 +12,31 @@ class TileEditor : EditorWindow {
         GetWindow(typeof(TileEditor));
     }
 
+    void OnEnable()
+    {
+        SceneView.duringSceneGui += SceneGUI;
+    }
+
+    void SceneGUI(SceneView sceneView)
+    {
+        // This will have scene events including mouse down on scenes objects
+        Event cur = Event.current;
+
+        if (cur.ToString().StartsWith ("Event: mouseDown"))
+        {
+            Debug.Log(cur.ToString());
+        }
+        
+    }
+
     void OnGUI()
     {
         if (GUILayout.Button("Reload Assets"))
         {
             fileData = retrive_AssetsByType();
+        } else
+        {
+            GUILayout.Button("");
         }
 
         if (fileData != null)
@@ -26,7 +46,7 @@ class TileEditor : EditorWindow {
                 //
                 foreach (var file in fileData[key])
                 {
-                    Debug.Log(file.Split('.')[0]);
+
                     Texture2D myTexture = AssetPreview.GetAssetPreview(Resources.Load(file.Split('.')[0]));
                     GUILayout.Button(myTexture, GUILayout.Width(95), GUILayout.Height(95));
                 }
@@ -34,32 +54,6 @@ class TileEditor : EditorWindow {
         }
     }
 
-    void OnClick(SceneView scene)
-    {
-        Event e = Event.current;
-
-        if (e.type == EventType.MouseDown && e.button == 2)
-        {
-            Debug.Log("Middle Mouse was pressed");
-
-            Vector3 mousePos = e.mousePosition;
-            float ppp = EditorGUIUtility.pixelsPerPoint;
-            mousePos.y = scene.camera.pixelHeight - mousePos.y * ppp;
-            mousePos.x *= ppp;
-
-            Ray ray = scene.camera.ScreenPointToRay(mousePos);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                //Do something, ---Example---
-                GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                go.transform.position = hit.point;
-                Debug.Log("Instantiated Primitive " + hit.point);
-            }
-            e.Use();
-        }
-    }
     private Dictionary<string, List<string>> retrive_AssetsByType()
     {
         var assets = new Dictionary<string, List<string>> { };
@@ -71,7 +65,7 @@ class TileEditor : EditorWindow {
             var ext = fileName.Split('.');
             var type = fileName.Split('_');
 
-            Debug.Log($"{fileName} {ext} {type}");
+            //Debug.Log($"{fileName} {ext} {type}");
 
             if (ext[ext.Length - 1] == "meta")
             {
