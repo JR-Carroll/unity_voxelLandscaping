@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using System.IO;
+using TerranBuilder;
 
 class TileEditor : EditorWindow {
     private Dictionary<string, List<string>> fileData;
+    string x = "0";
+    string z = "0";
 
     [MenuItem("Window/TileEditor")]
     public static void ShowWindow()
@@ -31,55 +33,15 @@ class TileEditor : EditorWindow {
 
     void OnGUI()
     {
-        if (GUILayout.Button("Reload Assets"))
+        x = EditorGUILayout.TextField("Width of Floor (x)", x);
+        z = EditorGUILayout.TextField("Depth of Floor (z)", z);
+
+        if (GUILayout.Button("Build Land"))
         {
-            fileData = retrive_AssetsByType();
-        } else
-        {
-            GUILayout.Button("");
+            TerrainBuilder land = new TerrainBuilder();
+            land.playFieldSizeX = int.Parse(x);
+            land.playFieldSizeY = int.Parse(z);
+            //land.placeNewFloor(Resources.Load("land_generic"), int.Parse(x), int.Parse(z));
         }
-
-        if (fileData != null)
-        {
-            foreach (var key in fileData.Keys)
-            {
-                //
-                foreach (var file in fileData[key])
-                {
-
-                    Texture2D myTexture = AssetPreview.GetAssetPreview(Resources.Load(file.Split('.')[0]));
-                    GUILayout.Button(myTexture, GUILayout.Width(95), GUILayout.Height(95));
-                }
-            }
-        }
-    }
-
-    private Dictionary<string, List<string>> retrive_AssetsByType()
-    {
-        var assets = new Dictionary<string, List<string>> { };
-        var fileNames = new DirectoryInfo("Assets\\Resources");
-
-        foreach (string file in Directory.GetFiles("Assets\\Resources")) {
-            
-            var fileName = Path.GetFileName(file);
-            var ext = fileName.Split('.');
-            var type = fileName.Split('_');
-
-            //Debug.Log($"{fileName} {ext} {type}");
-
-            if (ext[ext.Length - 1] == "meta")
-            {
-                // pass
-            }
-            else if (!assets.ContainsKey(type[0]))
-            {
-                assets.Add(type[0], new List<string> { fileName });
-            } else
-            {
-                assets[type[0]].Add(fileName);
-            }
-        }
-
-        return assets;
     }
 }
