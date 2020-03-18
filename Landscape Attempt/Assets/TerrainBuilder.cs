@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace TerranBuilder
 {
-
-    public class TerrainBuilder
+    public class TerrainBuilder: MonoBehaviour
     {
         public enum BuildStartType
         {
             CenterLinear,
-            CenterSpiral,
+            CenterSpiral, 
             Random,
             PlayerStart,
             EdgesInward,

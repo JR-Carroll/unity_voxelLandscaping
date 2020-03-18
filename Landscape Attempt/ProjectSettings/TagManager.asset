@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - floor
+  - water
+  - mountain
+  - spawn
+  - lava
+  - safe
   layers:
   - Default
   - TransparentFX
